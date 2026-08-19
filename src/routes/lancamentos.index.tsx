@@ -1,10 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { ArrowDownRight, ArrowUpRight, Plus, Receipt } from "lucide-react";
+import { Paperclip, Plus, Receipt } from "lucide-react";
 import { EmptyState } from "@/components/EmptyState";
 import { useLancamentos } from "@/hooks/useLancamentos";
 import { formatCurrency } from "@/lib/storage";
+import { openArquivo } from "@/lib/arquivos-storage";
+import { iconePorCategoria } from "@/types/lancamento";
 
 export const Route = createFileRoute("/lancamentos/")({
   head: () => ({
@@ -12,12 +14,12 @@ export const Route = createFileRoute("/lancamentos/")({
       { title: "Lançamentos — MEI Finanças" },
       {
         name: "description",
-        content: "Registre e acompanhe suas receitas e despesas do mês.",
+        content: "Registre e acompanhe suas receitas, despesas e notas fiscais do mês.",
       },
       { property: "og:title", content: "Lançamentos — MEI Finanças" },
       {
         property: "og:description",
-        content: "Registre e acompanhe suas receitas e despesas do mês.",
+        content: "Registre e acompanhe suas receitas, despesas e notas fiscais do mês.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -78,46 +80,58 @@ function TransactionsPage() {
                 {format(parseISO(data), "EEEE, dd 'de' MMMM", { locale: ptBR })}
               </h2>
               <ul className="flex flex-col gap-2">
-                {items.map((item) => (
-                  <li
-                    key={item.id}
-                    className="flex items-center justify-between rounded-xl border border-border bg-card p-3"
-                  >
-                    <div className="flex min-w-0 items-center gap-3">
-                      <div
-                        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${
-                          item.tipo === "receita"
-                            ? "bg-success/15 text-success"
-                            : "bg-destructive/10 text-destructive"
-                        }`}
+                {items.map((item) => {
+                  const Icon = iconePorCategoria(item.categoria);
+                  const hasFile = Boolean(item.arquivoId);
+                  const Wrapper = hasFile ? "button" : "div";
+                  return (
+                    <li key={item.id}>
+                      <Wrapper
+                        {...(hasFile
+                          ? {
+                              type: "button" as const,
+                              onClick: () => void openArquivo(item.arquivoId as string),
+                              "aria-label": `Abrir arquivo de ${item.categoria}`,
+                            }
+                          : {})}
+                        className="flex w-full items-center justify-between rounded-xl border border-border bg-card p-3 text-left transition-colors active:bg-muted"
                       >
-                        {item.tipo === "receita" ? (
-                          <ArrowUpRight className="h-4 w-4" />
-                        ) : (
-                          <ArrowDownRight className="h-4 w-4" />
-                        )}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="truncate text-sm font-medium text-foreground">
-                          {item.categoria}
-                        </p>
-                        {item.descricao ? (
-                          <p className="truncate text-xs text-muted-foreground">
-                            {item.descricao}
-                          </p>
-                        ) : null}
-                      </div>
-                    </div>
-                    <span
-                      className={`shrink-0 text-sm font-semibold ${
-                        item.tipo === "receita" ? "text-success" : "text-destructive"
-                      }`}
-                    >
-                      {item.tipo === "receita" ? "+" : "-"}
-                      {formatCurrency(item.valor)}
-                    </span>
-                  </li>
-                ))}
+                        <div className="flex min-w-0 items-center gap-3">
+                          <div
+                            className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${
+                              item.tipo === "receita"
+                                ? "bg-success/15 text-success"
+                                : "bg-destructive/10 text-destructive"
+                            }`}
+                          >
+                            <Icon className="h-4 w-4" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="flex items-center gap-1.5 truncate text-sm font-medium text-foreground">
+                              {item.categoria}
+                              {hasFile && (
+                                <Paperclip className="h-3.5 w-3.5 shrink-0 text-primary" />
+                              )}
+                            </p>
+                            {item.descricao ? (
+                              <p className="truncate text-xs text-muted-foreground">
+                                {item.descricao}
+                              </p>
+                            ) : null}
+                          </div>
+                        </div>
+                        <span
+                          className={`shrink-0 text-sm font-semibold ${
+                            item.tipo === "receita" ? "text-success" : "text-destructive"
+                          }`}
+                        >
+                          {item.tipo === "receita" ? "+" : "-"}
+                          {formatCurrency(item.valor)}
+                        </span>
+                      </Wrapper>
+                    </li>
+                  );
+                })}
               </ul>
             </section>
           ))}
