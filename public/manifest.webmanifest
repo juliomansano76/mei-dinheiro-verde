@@ -1,0 +1,17 @@
+{
+  "name": "MEI Finanças",
+  "short_name": "MEI Finanças",
+  "description": "App de finanças pessoais para MEIs brasileiros.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#059669",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}
