@@ -26,18 +26,16 @@ export const Route = createFileRoute("/")({
 });
 
 function Dashboard() {
+  const { userName, annualLimit, dasDueDay } = useFinanceData();
   const {
     hydrated,
-    userName,
-    monthlyIncome,
-    monthlyExpense,
-    monthlyBalance,
-    annualRevenue,
-    annualLimit,
-    revenueProgress,
-    dasDueDay,
-    recentTransactions,
-  } = useFinanceData();
+    receitasMes: monthlyIncome,
+    despesasMes: monthlyExpense,
+    saldoMes: monthlyBalance,
+    receitaAnual: annualRevenue,
+    ultimos: recentTransactions,
+  } = useLancamentos();
+  const revenueProgress = Math.min((annualRevenue / annualLimit) * 100, 100);
 
   const monthLabel = format(new Date(), "MMMM", { locale: ptBR });
   const capitalizedMonth = monthLabel.charAt(0).toUpperCase() + monthLabel.slice(1);
