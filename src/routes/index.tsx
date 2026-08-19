@@ -138,7 +138,7 @@ function Dashboard() {
           <div className="rounded-2xl border border-dashed border-border bg-card p-6 text-center">
             <p className="text-sm text-muted-foreground">Nenhum lançamento registrado.</p>
             <Link
-              to="/lancamentos"
+              to="/lancamentos/novo"
               className="mt-2 inline-flex text-sm font-medium text-primary"
             >
               Adicionar primeiro lançamento
