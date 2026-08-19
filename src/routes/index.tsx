@@ -3,6 +3,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { AlertTriangle, ArrowRight, ArrowUpRight, ArrowDownRight, Wallet } from "lucide-react";
 import { useFinanceData } from "@/hooks/useFinanceData";
+import { useLancamentos } from "@/hooks/useLancamentos";
 import { formatCurrency, formatDate } from "@/lib/storage";
 
 export const Route = createFileRoute("/")({
@@ -26,18 +27,16 @@ export const Route = createFileRoute("/")({
 });
 
 function Dashboard() {
+  const { userName, annualLimit, dasDueDay } = useFinanceData();
   const {
     hydrated,
-    userName,
-    monthlyIncome,
-    monthlyExpense,
-    monthlyBalance,
-    annualRevenue,
-    annualLimit,
-    revenueProgress,
-    dasDueDay,
-    recentTransactions,
-  } = useFinanceData();
+    receitasMes: monthlyIncome,
+    despesasMes: monthlyExpense,
+    saldoMes: monthlyBalance,
+    receitaAnual: annualRevenue,
+    ultimos: recentTransactions,
+  } = useLancamentos();
+  const revenueProgress = Math.min((annualRevenue / annualLimit) * 100, 100);
 
   const monthLabel = format(new Date(), "MMMM", { locale: ptBR });
   const capitalizedMonth = monthLabel.charAt(0).toUpperCase() + monthLabel.slice(1);
@@ -139,7 +138,7 @@ function Dashboard() {
           <div className="rounded-2xl border border-dashed border-border bg-card p-6 text-center">
             <p className="text-sm text-muted-foreground">Nenhum lançamento registrado.</p>
             <Link
-              to="/lancamentos"
+              to="/lancamentos/novo"
               className="mt-2 inline-flex text-sm font-medium text-primary"
             >
               Adicionar primeiro lançamento
@@ -155,12 +154,12 @@ function Dashboard() {
                 <div className="flex items-center gap-3">
                   <div
                     className={`flex h-9 w-9 items-center justify-center rounded-full ${
-                      transaction.type === "income"
+                      transaction.tipo === "receita"
                         ? "bg-success/15 text-success"
                         : "bg-destructive/10 text-destructive"
                     }`}
                   >
-                    {transaction.type === "income" ? (
+                    {transaction.tipo === "receita" ? (
                       <ArrowUpRight className="h-4.5 w-4.5" />
                     ) : (
                       <ArrowDownRight className="h-4.5 w-4.5" />
@@ -168,20 +167,20 @@ function Dashboard() {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-foreground">
-                      {transaction.description}
+                      {transaction.descricao || transaction.categoria}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {formatDate(transaction.date)} · {transaction.category}
+                      {formatDate(transaction.data)} · {transaction.categoria}
                     </p>
                   </div>
                 </div>
                 <span
                   className={`text-sm font-semibold ${
-                    transaction.type === "income" ? "text-success" : "text-destructive"
+                    transaction.tipo === "receita" ? "text-success" : "text-destructive"
                   }`}
                 >
-                  {transaction.type === "income" ? "+" : "-"}
-                  {formatCurrency(transaction.amount)}
+                  {transaction.tipo === "receita" ? "+" : "-"}
+                  {formatCurrency(transaction.valor)}
                 </span>
               </li>
             ))}

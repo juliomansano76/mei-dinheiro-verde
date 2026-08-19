@@ -13,6 +13,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AjustesRouteImport } from './routes/ajustes'
 import { Route as LancamentosRouteImport } from './routes/lancamentos'
 import { Route as RelatoriosRouteImport } from './routes/relatorios'
+import { Route as LancamentosIndexRouteImport } from './routes/lancamentos.index'
+import { Route as LancamentosNovoRouteImport } from './routes/lancamentos.novo'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,38 +36,66 @@ const RelatoriosRoute = RelatoriosRouteImport.update({
   path: '/relatorios',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LancamentosIndexRoute = LancamentosIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => LancamentosRoute,
+} as any)
+const LancamentosNovoRoute = LancamentosNovoRouteImport.update({
+  id: '/novo',
+  path: '/novo',
+  getParentRoute: () => LancamentosRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/ajustes': typeof AjustesRoute
-  '/lancamentos': typeof LancamentosRoute
+  '/lancamentos': typeof LancamentosRouteWithChildren
   '/relatorios': typeof RelatoriosRoute
+  '/lancamentos/novo': typeof LancamentosNovoRoute
+  '/lancamentos/': typeof LancamentosIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ajustes': typeof AjustesRoute
-  '/lancamentos': typeof LancamentosRoute
   '/relatorios': typeof RelatoriosRoute
+  '/lancamentos/novo': typeof LancamentosNovoRoute
+  '/lancamentos': typeof LancamentosIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/ajustes': typeof AjustesRoute
-  '/lancamentos': typeof LancamentosRoute
+  '/lancamentos': typeof LancamentosRouteWithChildren
   '/relatorios': typeof RelatoriosRoute
+  '/lancamentos/novo': typeof LancamentosNovoRoute
+  '/lancamentos/': typeof LancamentosIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/ajustes' | '/lancamentos' | '/relatorios'
+  fullPaths:
+    | '/'
+    | '/ajustes'
+    | '/lancamentos'
+    | '/relatorios'
+    | '/lancamentos/novo'
+    | '/lancamentos/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/ajustes' | '/lancamentos' | '/relatorios'
-  id: '__root__' | '/' | '/ajustes' | '/lancamentos' | '/relatorios'
+  to: '/' | '/ajustes' | '/relatorios' | '/lancamentos/novo' | '/lancamentos'
+  id:
+    | '__root__'
+    | '/'
+    | '/ajustes'
+    | '/lancamentos'
+    | '/relatorios'
+    | '/lancamentos/novo'
+    | '/lancamentos/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AjustesRoute: typeof AjustesRoute
-  LancamentosRoute: typeof LancamentosRoute
+  LancamentosRoute: typeof LancamentosRouteWithChildren
   RelatoriosRoute: typeof RelatoriosRoute
 }
 
@@ -99,13 +129,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RelatoriosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lancamentos/': {
+      id: '/lancamentos/'
+      path: '/'
+      fullPath: '/lancamentos/'
+      preLoaderRoute: typeof LancamentosIndexRouteImport
+      parentRoute: typeof LancamentosRoute
+    }
+    '/lancamentos/novo': {
+      id: '/lancamentos/novo'
+      path: '/novo'
+      fullPath: '/lancamentos/novo'
+      preLoaderRoute: typeof LancamentosNovoRouteImport
+      parentRoute: typeof LancamentosRoute
+    }
   }
 }
+
+interface LancamentosRouteChildren {
+  LancamentosNovoRoute: typeof LancamentosNovoRoute
+  LancamentosIndexRoute: typeof LancamentosIndexRoute
+}
+
+const LancamentosRouteChildren: LancamentosRouteChildren = {
+  LancamentosNovoRoute: LancamentosNovoRoute,
+  LancamentosIndexRoute: LancamentosIndexRoute,
+}
+
+const LancamentosRouteWithChildren = LancamentosRoute._addFileChildren(
+  LancamentosRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AjustesRoute: AjustesRoute,
-  LancamentosRoute: LancamentosRoute,
+  LancamentosRoute: LancamentosRouteWithChildren,
   RelatoriosRoute: RelatoriosRoute,
 }
 export const routeTree = rootRouteImport
