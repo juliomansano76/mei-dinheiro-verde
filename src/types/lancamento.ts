@@ -1,3 +1,17 @@
+import {
+  Briefcase,
+  Bus,
+  Car,
+  Handshake,
+  Home,
+  Megaphone,
+  Package,
+  ShoppingBag,
+  Utensils,
+  Wifi,
+  type LucideIcon,
+} from "lucide-react";
+
 export type LancamentoTipo = "receita" | "despesa";
 
 export interface Lancamento {
@@ -7,6 +21,7 @@ export interface Lancamento {
   categoria: string;
   data: string; // YYYY-MM-DD
   descricao: string;
+  arquivoId: string | null;
 }
 
 export const CATEGORIAS_RECEITA = [
@@ -27,4 +42,21 @@ export const CATEGORIAS_DESPESA = [
 
 export function categoriasPorTipo(tipo: LancamentoTipo): readonly string[] {
   return tipo === "receita" ? CATEGORIAS_RECEITA : CATEGORIAS_DESPESA;
+}
+
+const ICONES: Record<string, LucideIcon> = {
+  Vendas: ShoppingBag,
+  "Serviços Prestados": Briefcase,
+  Comissões: Handshake,
+  Material: Package,
+  Transporte: Bus,
+  Alimentação: Utensils,
+  "Internet/Telefone": Wifi,
+  Aluguel: Home,
+  Marketing: Megaphone,
+  Outros: Car,
+};
+
+export function iconePorCategoria(categoria: string): LucideIcon {
+  return ICONES[categoria] ?? Package;
 }
