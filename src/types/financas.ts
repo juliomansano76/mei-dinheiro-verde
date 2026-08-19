@@ -63,6 +63,7 @@ export const CATEGORIAS_DESPESA = [
   'Aluguel',
   'Marketing',
   'Contador',
+  'DAS - Simples Nacional',
   'Outros',
 ] as const;
 
