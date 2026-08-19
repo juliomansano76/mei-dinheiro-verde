@@ -151,6 +151,21 @@ export function useFinancas() {
     });
   }, []);
 
+  const removerDAS = useCallback((id: string) => {
+    setRegistrosDAS((anteriores) => {
+      const atualizados = anteriores.filter((d) => d.id !== id);
+      salvarNoStorage(CHAVES.das, atualizados);
+      return atualizados;
+    });
+  }, []);
+
+  const limparTudo = useCallback(() => {
+    setLancamentos([]);
+    setRegistrosDAS([]);
+    salvarNoStorage(CHAVES.lancamentos, []);
+    salvarNoStorage(CHAVES.das, []);
+  }, []);
+
   // ============================================================
   // CONFIGURAÇÃO
   // ============================================================
@@ -227,6 +242,8 @@ export function useFinancas() {
     removerLancamento,
     adicionarDAS,
     atualizarStatusDAS,
+    removerDAS,
+    limparTudo,
     salvarConfig,
 
     // Dados calculados para o Dashboard
