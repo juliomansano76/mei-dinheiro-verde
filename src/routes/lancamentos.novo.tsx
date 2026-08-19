@@ -40,7 +40,7 @@ function NovoLancamento() {
   const [categoria, setCategoria] = useState("");
   const [data, setData] = useState(todayISO());
   const [descricao, setDescricao] = useState("");
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<{ valor?: string; categoria?: string; data?: string }>({});
 
   const categorias = categoriasPorTipo(tipo);
 
@@ -52,7 +52,7 @@ function NovoLancamento() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const valorNumero = parseCurrencyInput(valor);
-    const next: Record<string, string> = {};
+    const next: { valor?: string; categoria?: string; data?: string } = {};
     if (valorNumero <= 0) next.valor = "Informe um valor maior que zero.";
     if (!categoria) next.categoria = "Selecione uma categoria.";
     if (!data) next.data = "Informe a data.";
