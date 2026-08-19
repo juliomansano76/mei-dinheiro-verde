@@ -143,13 +143,17 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+import { BottomNav } from "@/components/layout/BottomNav";
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <div className="mx-auto min-h-screen max-w-md bg-background pb-24">
+        <Outlet />
+      </div>
+      <BottomNav />
     </QueryClientProvider>
   );
 }
