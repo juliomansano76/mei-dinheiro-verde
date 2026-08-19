@@ -144,8 +144,6 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
-import { BottomNav } from "@/components/layout/BottomNav";
-
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
