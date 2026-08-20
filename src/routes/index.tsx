@@ -1,9 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { AlertTriangle, ArrowRight, ArrowUpRight, ArrowDownRight, Wallet } from "lucide-react";
+import {
+  AlertTriangle,
+  ArrowRight,
+  ArrowUpRight,
+  ArrowDownRight,
+  CheckCircle2,
+  Wallet,
+} from "lucide-react";
 import { useFinanceData } from "@/hooks/useFinanceData";
 import { useLancamentos } from "@/hooks/useLancamentos";
+import { useDas } from "@/hooks/useDas";
 import { formatCurrency, formatDate } from "@/lib/storage";
 
 export const Route = createFileRoute("/")({
