@@ -44,6 +44,7 @@ function Dashboard() {
     receitaAnual: annualRevenue,
     ultimos: recentTransactions,
   } = useLancamentos();
+  const { dasMesAtual } = useDas();
   const revenueProgress = Math.min((annualRevenue / annualLimit) * 100, 100);
 
   const monthLabel = format(new Date(), "MMMM", { locale: ptBR });
