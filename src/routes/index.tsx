@@ -1,9 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { AlertTriangle, ArrowRight, ArrowUpRight, ArrowDownRight, Wallet } from "lucide-react";
+import {
+  AlertTriangle,
+  ArrowRight,
+  ArrowUpRight,
+  ArrowDownRight,
+  CheckCircle2,
+  Wallet,
+} from "lucide-react";
 import { useFinanceData } from "@/hooks/useFinanceData";
 import { useLancamentos } from "@/hooks/useLancamentos";
+import { useDas } from "@/hooks/useDas";
 import { formatCurrency, formatDate } from "@/lib/storage";
 
 export const Route = createFileRoute("/")({
@@ -36,6 +44,7 @@ function Dashboard() {
     receitaAnual: annualRevenue,
     ultimos: recentTransactions,
   } = useLancamentos();
+  const { dasMesAtual } = useDas();
   const revenueProgress = Math.min((annualRevenue / annualLimit) * 100, 100);
 
   const monthLabel = format(new Date(), "MMMM", { locale: ptBR });
@@ -110,17 +119,42 @@ function Dashboard() {
         </p>
       </section>
 
-      <section className="flex items-start gap-3 rounded-2xl border border-warning/30 bg-warning/10 p-4">
-        <div className="mt-0.5 rounded-full bg-warning p-1.5">
-          <AlertTriangle className="h-4 w-4 text-warning-foreground" />
-        </div>
-        <div>
-          <p className="text-sm font-semibold text-warning-foreground">DAS vence dia {dasDueDay}</p>
-          <p className="mt-0.5 text-xs text-warning-foreground/80">
-            Não esqueça de pagar a guia do Simples Nacional até o dia {dasDueDay} deste mês.
-          </p>
-        </div>
-      </section>
+      {dasMesAtual?.status === "pago" ? (
+        <section className="flex items-start gap-3 rounded-2xl border border-success/30 bg-success/10 p-4">
+          <div className="mt-0.5 rounded-full bg-success p-1.5">
+            <CheckCircle2 className="h-4 w-4 text-primary-foreground" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-success">DAS em dia</p>
+            <p className="mt-0.5 text-xs text-success/80">
+              Guia de {formatCurrency(dasMesAtual.valor)} deste mês já está paga.
+            </p>
+          </div>
+        </section>
+      ) : (
+        <section className="flex items-start gap-3 rounded-2xl border border-warning/30 bg-warning/10 p-4">
+          <div className="mt-0.5 rounded-full bg-warning p-1.5">
+            <AlertTriangle className="h-4 w-4 text-warning-foreground" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-warning-foreground">
+              DAS vence dia {dasDueDay}
+            </p>
+            <p className="mt-0.5 text-xs text-warning-foreground/80">
+              {dasMesAtual
+                ? `Guia de ${formatCurrency(dasMesAtual.valor)} pendente — vence em ${formatDate(dasMesAtual.dataVencimento)}.`
+                : `Nenhuma guia registrada neste mês. Pague o Simples Nacional até o dia ${dasDueDay}.`}
+            </p>
+            <Link
+              to="/lancamentos/novo"
+              className="mt-2 inline-flex text-xs font-semibold text-warning-foreground underline"
+            >
+              {dasMesAtual ? "Ver histórico" : "Registrar DAS"}
+            </Link>
+          </div>
+        </section>
+      )}
+
 
       <section className="flex flex-col gap-3">
         <div className="flex items-center justify-between">

@@ -112,7 +112,7 @@ function NovoLancamento() {
       const info = { id, nome: file.name };
       if (target === "nf") {
         setNfFile(info);
-        setErrors((p) => ({ ...p, arquivo: undefined }));
+        setErrors(({ arquivo: _omit, ...rest }) => rest);
       } else {
         setDasFile(info);
       }
